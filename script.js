@@ -93,3 +93,21 @@ addUserName(accounts);
 accounts.forEach(e => {
     console.log(e.userName);
 });
+
+
+// calculating final balance
+const calcPrintBal = function(movements){
+	const balance = movements.reduce(function(accumulator, element, index, array){
+		return accumulator += element;
+	}, 0);
+	console.log(balance);
+	return balance;
+
+}
+
+const displayBalance = function(accountObj){
+	const balance = calcPrintBal(accountObj.movements);
+	labelBalance.textContent = `${balance} INR`;
+}
+
+displayBalance(account1);
