@@ -58,6 +58,8 @@ const inputCloseUsername = document.querySelector('.form__input--user');
 const inputClosePin = document.querySelector('.form__input--pin');
 
 /////////////////////////////////////////////////
+// 08 adding DOM
+
 const displayMovements = function(movements){
 	containerMovements.innerHTML = "";
 	movements.forEach((element, index) => {
@@ -95,7 +97,7 @@ accounts.forEach(e => {
 });
 
 
-// calculating final balance
+// 14 calculating final balance
 const calcPrintBal = function(movements){
 	const balance = movements.reduce(function(accumulator, element, index, array){
 		return accumulator += element;
@@ -105,9 +107,33 @@ const calcPrintBal = function(movements){
 
 }
 
+//16 CALCULATING INCOME OUTCOME INTEREST 
+const displaySummary = function(accountObj){
+	
+	const totalIn = accountObj.movements.filter((element, index, array) => element > 0)
+							.reduce((sum, element) => sum += element, 0);
+	labelSumIn.textContent = "";
+	labelSumIn.textContent = totalIn;
+
+	const totalOut = accountObj.movements.filter(element => element < 0).reduce((sum, element) => sum += element, 0);
+	labelSumOut.textContent = ""; 
+	labelSumOut.textContent = `${Math.abs(totalOut)}`; 
+
+	const interestRate = accountObj.interestRate;
+	const totalInterest = accountObj.movements.filter(element => element > 0)
+											  .map(element => element * interestRate / 100)
+											  .filter(element => element >= 1)
+											  .reduce((sum, element) => sum += element, 0);
+	labelSumInterest.textContent = "";
+	labelSumInterest.textContent = totalInterest;
+}
+
+// 14
 const displayBalance = function(accountObj){
 	const balance = calcPrintBal(accountObj.movements);
 	labelBalance.textContent = `${balance} INR`;
+	displaySummary(accountObj);
+
 }
 
 displayBalance(account1);
