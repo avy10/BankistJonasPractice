@@ -68,7 +68,7 @@ const displayMovements = function(movements){
 			<div class="movements__row">
 			<div class="movements__type movements__type--${typeOfAction}">${index + 1} ${typeOfAction}</div>
 			<div class="movements__date">3 days ago</div>
-			<div class="movements__value">${element}</div>
+			<div class="movements__value">${element.toFixed(2)}</div>
 			</div>
 		`;
 		containerMovements.insertAdjacentHTML("afterbegin", html);
@@ -117,7 +117,7 @@ const displaySummary = function(accountObj){
 
 	const totalOut = accountObj.movements.filter(element => element < 0).reduce((sum, element) => sum += element, 0);
 	labelSumOut.textContent = ""; 
-	labelSumOut.textContent = `${Math.abs(totalOut)}`; 
+	labelSumOut.textContent = `${Math.abs(totalOut.toFixed(2))}`; 
 
 	const interestRate = accountObj.interestRate;
 	const totalInterest = accountObj.movements.filter(element => element > 0)
@@ -125,18 +125,19 @@ const displaySummary = function(accountObj){
 											  .filter(element => element >= 1)
 											  .reduce((sum, element) => sum += element, 0);
 	labelSumInterest.textContent = "";
-	labelSumInterest.textContent = totalInterest;
+	labelSumInterest.textContent = totalInterest.toFixed(2);
 }
 
 // 14
 const displayBalance = function(accountObj){
 	const balance = calcPrintBal(accountObj.movements);
-	labelBalance.textContent = `${balance} INR`;
+	accountObj.balance = balance;
+	labelBalance.textContent = `${balance.toFixed(2)} INR`;
 	displaySummary(accountObj);
 
 }
 
-displayBalance(account1);
+// displayBalance(account1);
 
 
 // 19 event listener for login button
@@ -157,6 +158,7 @@ btnLogin.addEventListener("click", function(event){
 		// clear input fields
 		inputLoginUsername.value = inputLoginPin.value = ""; // care this
 		inputLoginPin.blur();
+		inputLoginUsername.blur();
 		// The blur() method removes focus from an element.
 
 
@@ -168,8 +170,8 @@ btnLogin.addEventListener("click", function(event){
 btnTransfer.addEventListener("click", function(event){
     event.preventDefault();
     const transferAmount = Number(inputTransferAmount.value);
-    console.log(transferAmount)
     const receiverAcc = accounts.find(acc => acc.userName === inputTransferTo.value);
+	console.log(transferAmount, receiverAcc);
     if(receiverAcc && transferAmount > 0 && transferAmount <= currentAccount.balance && receiverAcc.userName !== currentAccount.userName){
         transferAmount !== 0 && currentAccount.movements.push(-1 * transferAmount);
         receiverAcc?.movements.push(transferAmount);
@@ -186,7 +188,7 @@ btnTransfer.addEventListener("click", function(event){
 // 22 implementing loan request
 btnLoan.addEventListener("click", function(event){
 	event.preventDefault();
-	const amount = Number(inputLoanAmount.value);
+	const amount = Math.floor((inputLoanAmount.value));
 	if(amount > 0 && currentAccount.movements.some((e) => e >= amount * 0.1)){
 		// add movement
 		currentAccount.movements.push(amount);
@@ -261,3 +263,5 @@ btnSort.addEventListener("click", function(event){
 		displayMovements(currentAccount.movements);
 	}
 })
+
+//12.4 using toFixed and Math.floor
