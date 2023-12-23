@@ -154,6 +154,9 @@ const displayMovements = function(obj, truth = false){
 	movements.forEach((element, index) => {
 		const typeOfAction = element > 0 ? "deposit" : "withdrawal";
 		//calculating dates
+				// const currentDate = obj.movementsDates[index] ? new Date(obj.movementsDates[index]) : new Date();
+				// not optimal cz while we might add date to the dom, we are not storing it in array so we loose data
+				// instead do a push to movementsDates array in the transfer
 		const currentDate = new Date(obj.movementsDates[index]);
 		const currentDateDay = `${currentDate.getDate()}`;
 		const currentDateMonth = `${currentDate.getMonth() +1}`.padStart(2, 0) ;
@@ -277,6 +280,10 @@ btnTransfer.addEventListener("click", function(event){
     if(receiverAcc && transferAmount > 0 && transferAmount <= currentAccount.balance && receiverAcc.userName !== currentAccount.userName){
         transferAmount !== 0 && currentAccount.movements.push(-1 * transferAmount);
         receiverAcc?.movements.push(transferAmount);
+		// use toISOString on dates as that is how the previous dates has been stored.
+		// because new Date() gives us a date object : Date Sat Dec 23 2023 05:34:32 GMT+0530 (India Standard Time)
+		currentAccount.movementsDates.push(new Date().toISOString());
+		receiverAcc.movementsDates.push(new Date().toISOString());
         displayMovements(currentAccount);
         calcPrintBal(currentAccount.movements);
         displayBalance(currentAccount);
@@ -294,6 +301,7 @@ btnLoan.addEventListener("click", function(event){
 	if(amount > 0 && currentAccount.movements.some((e) => e >= amount * 0.1)){
 		// add movement
 		currentAccount.movements.push(amount);
+		currentAccount.movementsDates.push(new Date().toISOString());
 		displayBalance(currentAccount);
 		displayMovements(currentAccount);
 
